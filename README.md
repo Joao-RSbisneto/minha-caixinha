@@ -57,7 +57,7 @@ A contratação do provedor, domínio, DNS e configuração das credenciais não
 
 Repositório: https://github.com/Joao-RSbisneto/minha-caixinha
 
-Na Vercel, importe esse repositório e selecione o preset **Other**. O arquivo `vercel.json` define o comando `npm run build` e a pasta de saída `dist`. O build copia apenas os sete arquivos necessários ao site e verifica se a configuração usa uma chave pública do Supabase. SQL, testes e dependências não são publicados como páginas.
+Na Vercel, importe esse repositório e selecione o preset **Other**. O arquivo `vercel.json` define o comando `npm run build` e a pasta de saída `dist`. O build copia apenas os arquivos necessários ao site e verifica se a configuração usa uma chave pública do Supabase. SQL, testes e dependências não são publicados como páginas.
 
 Depois do primeiro deploy, adicione a URL de produção em Authentication → URL Configuration no Supabase (Site URL e Redirect URLs). Mantenha também os endereços locais caso continue desenvolvendo no computador. Essa configuração é necessária para os links de recuperação de senha retornarem ao site publicado.
 
@@ -95,3 +95,9 @@ Validação manual após a migração:
 - [Funções do banco](https://supabase.com/docs/guides/database/functions)
 - [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [SMTP personalizado](https://supabase.com/docs/guides/auth/auth-smtp)
+
+## SEO e compartilhamento
+
+A URL oficial é https://minha-caixinha-nine.vercel.app/. O HTML define título, descrição, canonical, Open Graph, Twitter Card e dados estruturados WebSite. A publicação inclui robots.txt, sitemap.xml e uma prévia social PNG de 1200 × 630. Se mudar o domínio, atualize as URLs desses arquivos. O sitemap contém apenas a página pública; os dados financeiros dependem de autenticação e RLS.
+
+Para acompanhar a indexação, adicione a URL no Google Search Console, conclua a verificação de propriedade e envie sitemap.xml. Não há garantia de indexação ou posição nos resultados; o aplicativo tem pouco conteúdo público. A configuração do Search Console ainda não foi realizada.

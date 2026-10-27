@@ -13,7 +13,7 @@ if (!publicKey) {
   try { publicKey = JSON.parse(Buffer.from(config.anonKey.split('.')[1], 'base64url').toString()).role === 'anon'; } catch {}
 }
 if (!publicKey) throw new Error('A publicação exige uma chave pública publishable ou anon.');
-const files = ['index.html', 'favicon.svg', 'css/styles.css', 'js/app.js', 'js/render.js', 'js/finance.js', 'js/supabase-config.js'];
+const files = ['index.html', 'favicon.svg', 'robots.txt', 'sitemap.xml', 'social-preview.png', 'css/styles.css', 'js/app.js', 'js/render.js', 'js/finance.js', 'js/supabase-config.js'];
 for (const file of files) {
   const target = path.join(root, 'dist', file);
   fs.mkdirSync(path.dirname(target), { recursive: true });

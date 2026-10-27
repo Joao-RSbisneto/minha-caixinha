@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://minha-caixinha-nine.vercel.app/sitemap.xml

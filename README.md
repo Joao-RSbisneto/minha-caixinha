@@ -37,7 +37,7 @@ Se precisar repetir a instalação, execute o SQL inicial e em seguida a migraç
 
 Na tela de entrada, preencha o e-mail e clique em **Esqueci minha senha**. O link recebido abre um formulário de nova senha. O aplicativo usa os eventos de recuperação do SDK e não aceita trocar a senha apenas por abrir uma URL sem sessão válida. O Supabase aplica a política de senha configurada no projeto; a tela exige pelo menos oito caracteres.
 
-O botão **Reenviar confirmação de e-mail** solicita um novo link para contas pendentes. Há espera de um minuto no aplicativo entre solicitações de cada tipo, mas os limites do Supabase podem exigir uma espera maior. Use sempre o e-mail mais recente. Erros de link inválido/expirado são mostrados na página.
+O cadastro deve ser configurado sem confirmação obrigatória no painel do Supabase (Authentication → Sign In / Providers → Email → Confirm email desativado). A tela mantém apenas o envio de recuperação de senha, com espera de um minuto entre solicitações; os limites do Supabase podem exigir uma espera maior.
 
 ## Configurar envio de e-mails (etapa externa pendente)
 

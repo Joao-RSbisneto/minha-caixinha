@@ -29,8 +29,7 @@ let editingId = null,
   recoveryMode = false,
   refreshPending = false,
   previousFocus = null;
-let confirmationRetryAt = 0,
-  passwordRetryAt = 0;
+let passwordRetryAt = 0;
 const totals = () => window.Caixinha.totals(state);
 const defaultState = () => ({
   goal: 50000,
@@ -253,7 +252,7 @@ function openTx(type, tx = null) {
 }
 function authErrorMessage(error) {
   if (error.code === "email_not_confirmed")
-    return "Confirme seu e-mail para entrar. Use Reenviar confirmação de e-mail para solicitar um novo link.";
+    return "Confirme seu e-mail para entrar. Verifique sua caixa de entrada ou entre em contato com o administrador.";
   if (error.code === "invalid_credentials")
     return "E-mail ou senha incorretos.";
   if (
@@ -308,8 +307,8 @@ async function authenticate(event, register) {
     button.disabled = false;
   }
 }
-async function requestEmail(recovery) {
-  const button = $(recovery ? "forgotPassword" : "resendConfirmation"),
+async function requestEmail() {
+  const button = $("forgotPassword"),
     status = $("confirmationStatus"),
     input = $("loginEmail");
   if (!CLOUD_ENABLED) {
@@ -317,28 +316,21 @@ async function requestEmail(recovery) {
     return;
   }
   if (button.disabled || !input.reportValidity()) return;
-  if (Date.now() < (recovery ? passwordRetryAt : confirmationRetryAt)) {
+  if (Date.now() < passwordRetryAt) {
     status.textContent =
       "Aguarde um minuto antes de solicitar outro e-mail. O limite do Supabase pode exigir uma espera maior.";
     return;
   }
   button.disabled = true;
-  if (recovery) passwordRetryAt = Date.now() + 60000;
-  else confirmationRetryAt = Date.now() + 60000;
+  passwordRetryAt = Date.now() + 60000;
   status.textContent = "Solicitando e-mail…";
   try {
     const redirectTo = new URL(window.location.pathname, window.location.origin)
       .href;
-    const { error } = recovery
-      ? await supabaseClient.auth.resetPasswordForEmail(
-          input.value.trim().toLowerCase(),
-          { redirectTo },
-        )
-      : await supabaseClient.auth.resend({
-          type: "signup",
-          email: input.value.trim().toLowerCase(),
-          options: { emailRedirectTo: redirectTo },
-        });
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(
+      input.value.trim().toLowerCase(),
+      { redirectTo },
+    );
     if (error) throw error;
     status.textContent =
       "Solicitação aceita. Se houver uma conta elegível, você receberá um e-mail. Confira também o spam e use o link mais recente.";
@@ -371,8 +363,7 @@ $("loginTab").onclick = () => switchAuth("login");
 $("registerTab").onclick = () => switchAuth("register");
 $("loginForm").onsubmit = (event) => authenticate(event, false);
 $("registerForm").onsubmit = (event) => authenticate(event, true);
-$("resendConfirmation").onclick = () => requestEmail(false);
-$("forgotPassword").onclick = () => requestEmail(true);
+$("forgotPassword").onclick = () => requestEmail();
 $("passwordForm").onsubmit = async (event) => {
   event.preventDefault();
   const button = $("passwordForm").querySelector('button[type="submit"]');

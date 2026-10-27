@@ -226,8 +226,8 @@ test("link de recuperação abre formulário dedicado", async () => {
 test("recuperação de senha respeita espera entre solicitações", async () => {
   const a = app();
   a.element("loginEmail").value = "user@example.com";
-  await a.run("requestEmail(true)");
-  await a.run("requestEmail(true)");
+  await a.run("requestEmail()");
+  await a.run("requestEmail()");
   assert.equal(a.counts().recoveryRequests, 1);
   assert.match(a.element("confirmationStatus").textContent, /Aguarde/);
 });

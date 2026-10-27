@@ -286,7 +286,10 @@ async function authenticate(event, register) {
     setError("registerError", "As senhas não coincidem.");
     return;
   }
+  const originalLabel = button.textContent;
   button.disabled = true;
+  button.textContent = register ? "Criando sua conta…" : "Entrando…";
+  form.classList.add("is-loading");
   try {
     const { data, error } = register
       ? await supabaseClient.auth.signUp({ email, password })
@@ -300,11 +303,14 @@ async function authenticate(event, register) {
       );
       return;
     }
+    button.textContent = "Carregando sua caixinha…";
     await openSession(data.user);
   } catch (error) {
     setError(prefix + "Error", authErrorMessage(error));
   } finally {
     button.disabled = false;
+    button.textContent = originalLabel;
+    form.classList.remove("is-loading");
   }
 }
 async function requestEmail() {

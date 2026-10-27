@@ -47,6 +47,7 @@ function app(configured = true, recovery = false, sessionRequest = null) {
     },
     error: null,
   };
+  let loginRequest = null;
   let authError = null,
     callback,
     recoveryRequests = 0,
@@ -67,10 +68,11 @@ function app(configured = true, recovery = false, sessionRequest = null) {
       getSession: () =>
         sessionRequest || Promise.resolve({ data: { session: null } }),
       onAuthStateChange: (fn) => (callback = fn),
-      signInWithPassword: async () => ({
-        error: authError,
-        data: { user: { id: "user", email: "a@b.com" } },
-      }),
+      signInWithPassword: async () =>
+        loginRequest || {
+          error: authError,
+          data: { user: { id: "user", email: "a@b.com" } },
+        },
       resetPasswordForEmail: async () => {
         recoveryRequests++;
         return { error: authError };
@@ -154,6 +156,7 @@ function app(configured = true, recovery = false, sessionRequest = null) {
     run: (code) => vm.runInContext(code, context),
     setResult: (value) => (result = value),
     setError: (error) => (authError = error),
+    setLoginRequest: (request) => (loginRequest = request),
     event: (value) => callback(value),
     counts: () => ({ writes, recoveryRequests }),
   };
@@ -280,4 +283,27 @@ test("HTML inicial oculta o login antes de executar JavaScript", () => {
   const html = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
   assert.match(html, /id="authScreen" class="hidden"/);
   assert.match(html, /id="loadingScreen"/);
+});
+
+test("login mostra carregamento e restaura botão após falha", async () => {
+  const a = app();
+  await new Promise((resolve) => setImmediate(resolve));
+  let finish;
+  a.setLoginRequest(
+    new Promise((resolve) => {
+      finish = resolve;
+    }),
+  );
+  const form = a.element("loginForm"),
+    button = form.querySelector('button[type="submit"]');
+  button.textContent = "Entrar na caixinha";
+  const pending = a.run("authenticate({preventDefault(){}},false)");
+  assert.equal(button.disabled, true);
+  assert.equal(button.textContent, "Entrando…");
+  assert.equal(form.classList.contains("is-loading"), true);
+  finish({ error: { code: "invalid_credentials" } });
+  await pending;
+  assert.equal(button.disabled, false);
+  assert.equal(button.textContent, "Entrar na caixinha");
+  assert.equal(form.classList.contains("is-loading"), false);
 });

@@ -706,3 +706,23 @@ button:focus-visible {
 .loading-screen p {
   margin: 0;
 }
+.auth-form.is-loading .submit::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: auth-spin 0.75s linear infinite;
+}
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-form.is-loading .submit::before {
+    animation: none;
+  }
+}

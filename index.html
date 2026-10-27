@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Nossa Caixinha ❤️</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <section
+      id="loadingScreen"
+      class="loading-screen"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div class="logo" aria-hidden="true">⌂</div>
+      <p>Carregando sua caixinha…</p>
+    </section>
+    <noscript
+      >Ative o JavaScript no navegador para acessar sua caixinha.</noscript
+    >
+    <section id="authScreen" class="hidden">
+      <div class="auth-card" id="authCard">
+        <div class="auth-brand">
+          <div class="logo">⌂</div>
+          <h1>Nossa Caixinha <span style="color: #c66b7a">♥</span></h1>
+          <p>Um sonho, duas pessoas, nosso futuro.</p>
+        </div>
+        <div class="auth-tabs">
+          <button type="button" id="loginTab" class="active">Entrar</button
+          ><button type="button" id="registerTab">Criar cadastro</button>
+        </div>
+        <form id="loginForm" class="auth-form active">
+          <label for="loginEmail">E-mail</label
+          ><input
+            id="loginEmail"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="voce@email.com"
+          /><label for="loginPassword">Senha</label
+          ><input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+            placeholder="Sua senha"
+          />
+          <div class="auth-error" id="loginError" role="alert"></div>
+          <button class="btn submit" type="submit">Entrar na caixinha</button
+          ><button
+            class="btn outline auth-action"
+            type="button"
+            id="forgotPassword"
+          >
+            Esqueci minha senha</button
+          ><button
+            class="btn outline"
+            type="button"
+            id="resendConfirmation"
+            style="width: 100%; justify-content: center; margin-top: 10px"
+          >
+            Reenviar confirmação de e-mail
+          </button>
+          <p
+            id="confirmationStatus"
+            role="status"
+            aria-live="polite"
+            class="auth-hint"
+          ></p>
+        </form>
+        <form id="registerForm" class="auth-form">
+          <label for="registerEmail">E-mail</label
+          ><input
+            id="registerEmail"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="voce@email.com"
+          /><label for="registerPassword">Crie uma senha</label
+          ><input
+            id="registerPassword"
+            type="password"
+            minlength="6"
+            autocomplete="new-password"
+            required
+            placeholder="Pelo menos 6 caracteres"
+          /><label for="registerConfirm">Confirme a senha</label
+          ><input
+            id="registerConfirm"
+            type="password"
+            minlength="6"
+            autocomplete="new-password"
+            required
+            placeholder="Digite a senha novamente"
+          />
+          <div class="auth-error" id="registerError" role="alert"></div>
+          <button class="btn submit" type="submit">Criar minha conta</button>
+        </form>
+        <p class="auth-hint">
+          Acesse com seu e-mail e senha. Sua conta e os dados da caixinha ficam
+          no Supabase.
+        </p>
+      </div>
+      <div class="auth-card setup-card hidden" id="setupCard">
+        <div class="auth-brand">
+          <div class="logo">⌂</div>
+          <h1>Vamos montar a caixinha ♥</h1>
+          <p>Contem como vocês querem começar.</p>
+        </div>
+        <form id="setupForm">
+          <div class="formrow">
+            <div>
+              <label for="husbandName">Nome do marido</label
+              ><input
+                id="husbandName"
+                maxlength="35"
+                required
+                placeholder="Nome do marido"
+              />
+            </div>
+            <div>
+              <label for="wifeName">Nome da esposa</label
+              ><input
+                id="wifeName"
+                maxlength="35"
+                required
+                placeholder="Nome da esposa"
+              />
+            </div>
+          </div>
+          <label for="initialBalance">Quanto já tem na caixinha? (R$)</label
+          ><input
+            id="initialBalance"
+            type="number"
+            min="0"
+            step="0.01"
+            value="0"
+            required
+          /><label for="initialGoal">Meta para a casa própria (R$)</label
+          ><input
+            id="initialGoal"
+            type="number"
+            min="0.01"
+            step="0.01"
+            value="50000"
+            required
+          />
+          <div class="auth-error" id="setupError" role="alert"></div>
+          <button class="btn submit" type="submit">Criar nossa caixinha</button>
+        </form>
+        <p class="auth-hint">
+          O valor inicial será registrado como saldo de abertura, separado das
+          contribuições individuais.
+        </p>
+      </div>
+      <div class="auth-card hidden" id="recoveryCard">
+        <h1>Definir nova senha</h1>
+        <p>Escolha uma senha para voltar à sua caixinha.</p>
+        <form id="passwordForm">
+          <label for="newPassword">Nova senha</label
+          ><input
+            id="newPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          /><label for="confirmPassword">Confirme a nova senha</label
+          ><input
+            id="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          />
+          <div class="auth-error" id="passwordError" role="alert"></div>
+          <button class="btn submit" type="submit">Salvar nova senha</button
+          ><button
+            class="btn outline auth-action"
+            id="cancelRecovery"
+            type="button"
+          >
+            Voltar para entrar
+          </button>
+        </form>
+      </div>
+    </section>
+    <main class="wrap hidden" id="appScreen">
+      <header class="top">
+        <div class="brand">
+          <div class="logo">⌂</div>
+          <div>
+            <h1>Nossa Caixinha <span style="color: #c66b7a">♥</span></h1>
+            <p>Um sonho, duas pessoas, nosso futuro.</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px">
+          <div class="pill">🔒 Espaço do casal</div>
+          <button class="btn outline logout" id="logoutBtn" type="button">
+            Sair
+          </button>
+        </div>
+      </header>
+      <p id="syncStatus" class="sync-status" role="status" aria-live="polite">
+        Conectando…
+      </p>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">Nossa reserva para a casa própria</div>
+          <div class="balance" id="balance">R$ 0,00</div>
+          <p>Todo passo conta quando caminhamos juntos.</p>
+          <div class="actions">
+            <button class="btn primary" id="addDeposit">
+              ＋ Registrar depósito</button
+            ><button class="btn secondary" id="addWithdraw">
+              ↗ Registrar retirada
+            </button>
+          </div>
+        </div>
+        <div class="goalbox">
+          <div class="goalhead">
+            <span>Meta da nossa casa</span><strong id="percent">0%</strong>
+          </div>
+          <div
+            style="font-size: 25px; font-weight: 750; margin-top: 8px"
+            id="goalLabel"
+          >
+            R$ 50.000,00
+          </div>
+          <div class="track"><span id="progress"></span></div>
+          <div class="goalhead small">
+            <span id="savedLabel">R$ 0,00 guardados</span
+            ><span id="remainingLabel">Faltam R$ 50.000,00</span>
+          </div>
+          <button
+            class="btn secondary"
+            id="editGoal"
+            style="margin-top: 16px; padding: 8px 11px"
+          >
+            ⚙ Ajustar meta
+          </button>
+        </div>
+      </section>
+      <div id="openingBalanceNote" class="note hidden" style="margin-top: 14px">
+        Saldo inicial da caixinha: <b id="openingBalanceText">R$ 0,00</b>
+      </div>
+      <section class="stats">
+        <div class="stat">
+          <div class="ico">↙</div>
+          <div class="statcontent">
+            <div class="stathead">Total depositado</div>
+            <strong id="deposited">R$ 0,00</strong
+            ><small>Somando as contribuições</small>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="ico" style="background: #fff0ef; color: #b94d55">↗</div>
+          <div class="statcontent">
+            <div class="stathead">Total retirado</div>
+            <strong id="withdrawn">R$ 0,00</strong
+            ><small>Movimentações de saída</small>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="ico" style="background: #f8f0dc; color: #92722c">♡</div>
+          <div class="statcontent">
+            <div class="stathead">Dias construindo esse sonho</div>
+            <strong id="days">0 dias</strong
+            ><small>Desde o primeiro depósito</small>
+          </div>
+        </div>
+      </section>
+      <section class="grid">
+        <div class="panel">
+          <div class="panelhead">
+            <div>
+              <h2>Extrato da caixinha</h2>
+              <p>Todo movimento fica registrado aqui.</p>
+            </div>
+            <select id="filter" class="filter" style="max-width: 130px">
+              <option value="all">Tudo</option>
+              <option value="deposit">Depósitos</option>
+              <option value="withdraw">Retiradas</option>
+            </select>
+          </div>
+          <div id="transactions"></div>
+        </div>
+        <aside class="panel">
+          <div class="panelhead">
+            <div>
+              <h2>Nossas contribuições</h2>
+              <p>Quanto cada um já colocou.</p>
+            </div>
+            <span>♡</span>
+          </div>
+          <div class="couple">
+            <div class="person">
+              <div class="avatar" id="avatar1">V</div>
+              <strong id="name1">Você</strong><span>Contribuição total</span
+              ><b id="total1">R$ 0,00</b>
+            </div>
+            <div class="person">
+              <div class="avatar" id="avatar2">A</div>
+              <strong id="name2">Minha esposa</strong
+              ><span>Contribuição total</span><b id="total2">R$ 0,00</b>
+            </div>
+          </div>
+          <button
+            class="btn outline"
+            id="editNames"
+            style="width: 100%; justify-content: center; margin-top: 12px"
+          >
+            ✎ Personalizar nomes
+          </button>
+          <div class="note">
+            💡 <b>Nosso combinado:</b> usem a descrição para registrar o motivo
+            de cada depósito ou retirada. Transparência hoje, tranquilidade
+            amanhã.
+          </div>
+          <button
+            class="btn outline"
+            id="export"
+            style="width: 100%; justify-content: center; margin-top: 12px"
+          >
+            ⇩ Exportar extrato CSV</button
+          ><button
+            class="btn outline auth-action"
+            id="showHistory"
+            type="button"
+          >
+            Histórico de alterações</button
+          ><button
+            class="btn outline"
+            id="reset"
+            style="
+              width: 100%;
+              justify-content: center;
+              margin-top: 8px;
+              color: #a8444b;
+            "
+          >
+            Apagar dados da caixinha
+          </button>
+        </aside>
+      </section>
+      <div class="footer">
+        Feito com carinho para o nosso futuro. · Nossa Caixinha ©
+        <span id="year"></span><br /><span
+          style="display: block; margin-top: 5px"
+          >Dados salvos online com Supabase.</span
+        >
+      </div>
+    </main>
+    <div class="modalback" id="modalback">
+      <form
+        class="modal"
+        id="txForm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modalhead">
+          <h2 id="modalTitle">Registrar movimentação</h2>
+          <button
+            type="button"
+            class="x"
+            id="closeModal"
+            aria-label="Fechar janela"
+          >
+            ×
+          </button>
+        </div>
+        <input type="hidden" id="txType" /><label for="txAmount"
+          >Valor (R$)</label
+        ><input
+          id="txAmount"
+          type="number"
+          min="0.01"
+          step="0.01"
+          placeholder="0,00"
+          required
+        />
+        <div class="formrow">
+          <div>
+            <label for="txPerson">Quem movimentou?</label
+            ><select id="txPerson">
+              <option value="1">Você</option>
+              <option value="2">Minha esposa</option>
+            </select>
+          </div>
+          <div>
+            <label for="txDate">Data</label
+            ><input id="txDate" type="date" required />
+          </div>
+        </div>
+        <label for="txDesc">Descrição</label
+        ><input
+          id="txDesc"
+          maxlength="100"
+          placeholder="Ex.: economia do mês"
+          required
+        /><button class="btn submit" type="submit">Salvar movimentação</button>
+      </form>
+    </div>
+    <div class="modalback" id="goalback">
+      <form
+        class="modal"
+        id="goalForm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="goalTitle"
+      >
+        <div class="modalhead">
+          <h2 id="goalTitle">Meta da casa própria</h2>
+          <button
+            type="button"
+            class="x"
+            id="closeGoal"
+            aria-label="Fechar janela"
+          >
+            ×
+          </button>
+        </div>
+        <label for="goalAmount">Qual é a meta de vocês? (R$)</label
+        ><input
+          id="goalAmount"
+          type="number"
+          min="0.01"
+          step="0.01"
+          required
+        /><button class="btn submit" type="submit">Salvar meta</button>
+      </form>
+    </div>
+    <div class="modalback" id="namesback">
+      <form
+        class="modal"
+        id="namesForm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="namesTitle"
+      >
+        <div class="modalhead">
+          <h2 id="namesTitle">Personalizar nomes</h2>
+          <button
+            type="button"
+            class="x"
+            id="closeNames"
+            aria-label="Fechar janela"
+          >
+            ×
+          </button>
+        </div>
+        <label for="person1">Seu nome</label
+        ><input id="person1" maxlength="35" required /><label for="person2"
+          >Nome da sua esposa</label
+        ><input id="person2" maxlength="35" required /><button
+          class="btn submit"
+          type="submit"
+        >
+          Salvar nomes
+        </button>
+      </form>
+    </div>
+    <div class="modalback" id="historyback">
+      <section
+        class="modal history-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="historyTitle"
+      >
+        <div class="modalhead">
+          <h2 id="historyTitle">Histórico de alterações</h2>
+          <button
+            type="button"
+            class="x"
+            id="closeHistory"
+            aria-label="Fechar histórico"
+          >
+            ×
+          </button>
+        </div>
+        <p>Últimas 100 alterações, incluindo lançamentos importados.</p>
+        <div id="historyList" aria-live="polite"></div>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/finance.js" defer></script>
+    <script src="js/render.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>

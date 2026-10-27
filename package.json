@@ -1,0 +1,14 @@
+{
+  "name": "nossa-caixinha",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "format": "prettier --write index.html css/*.css js/app.js js/finance.js js/render.js tests/*.cjs README.md",
+    "build": "node scripts/build-release.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "prettier": "3.6.2"
+  }
+}
